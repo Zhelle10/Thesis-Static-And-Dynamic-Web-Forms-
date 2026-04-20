@@ -1,3 +1,13 @@
+{
+  /* 
+     *ALWAYS change the URL/API address when changing hotspot or network. 
+
+     *URL
+      backend: URL:5000 OR 5000/api/static to see the datas
+      frontend: URL:5153
+*/
+}
+
 import express from "express";
 import cors from "cors";
 
