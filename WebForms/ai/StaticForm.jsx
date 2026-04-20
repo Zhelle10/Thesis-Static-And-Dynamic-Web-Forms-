@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
+import { useState } from "react";  
+import FormTimer from "/src/components/FormTimer"; 
 
 const StaticForm = () => {
     const [formData, setFormData] = useState({
@@ -20,16 +22,24 @@ const StaticForm = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // ✅ POSTCODE RULE: numbers only + max 5 digits
+        // POSTCODE: only numbers + max 5 digits
         if (name === "postCode") {
-            const onlyNumbers = value.replace(/\D/g, ""); // remove letters
-            if (onlyNumbers.length > 5) return; // block extra digits
+            const onlyNumbers = value.replace(/\D/g, "");
 
-            setFormData({ ...formData, postCode: onlyNumbers });
-        } else {
-            setFormData({ ...formData, [name]: value });
+            if (onlyNumbers.length <= 5) {
+                setFormData({ ...formData, postCode: onlyNumbers });
+            }
+            return;
         }
 
+        // MOBILE: only numbers
+        if (name === "mobile") {
+            const onlyNumbers = value.replace(/\D/g, "");
+            setFormData({ ...formData, mobile: onlyNumbers });
+            return;
+        }
+
+        setFormData({ ...formData, [name]: value });
         setErrors({ ...errors, [name]: "" });
     };
 
@@ -42,9 +52,22 @@ const StaticForm = () => {
             }
         });
 
-        // ✅ postcode validation
-        if (!/^\d{5}$/.test(formData.postCode)) {
-            newErrors.postCode = "Postcode must be exactly 5 digits";
+        // ✅ POSTCODE RULE: 4–5 digits
+        if (!/^\d{4,5}$/.test(formData.postCode)) {
+            newErrors.postCode = "Postcode must be 4–5 digits";
+        }
+
+        // ✅ MOBILE RULE: 11 digits
+        if (!/^\d{8,11}$/.test(formData.mobile)) {
+            newErrors.mobile = "Mobile number must be 8-11 digits";
+        }
+
+        // ✅ PASSWORD VALIDATION
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+        if (!passwordRegex.test(formData.password)) {
+            newErrors.password =
+                "Password must be at least 8 characters, include 1 uppercase letter and 1 number";
         }
 
         if (formData.email !== formData.confirmEmail) {
@@ -98,11 +121,15 @@ const StaticForm = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <form className="bg-white shadow-xl rounded-2xl px-8 py-6 w-full max-w-3xl">
 
-                <h1 className="text-3xl font-bold text-center text-blue-600 mb-2">
-                    The Bite And Breakfast Inn
+                <h1 className="text-[26px] font-bold text-center text-blue-600 mb-2">
+                    Bite And Breakfast Inn
                 </h1>
+                <p className="text-center text-gray-600 mb-6">
+                    “Where every bed comes with extra guests.”
+                </p>
+                <FormTimer />
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-1">
 
                     {Object.keys(formData).map((field) => (
                         <div key={field} className={field === "password" ? "col-span-2" : ""}>
@@ -115,12 +142,12 @@ const StaticForm = () => {
                                 value={formData[field]}
                                 onChange={handleChange}
                                 type={field.includes("password") ? "password" : "text"}
-                                inputMode={field === "postCode" ? "numeric" : "text"}
-                                className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
+                                inputMode={field === "postCode" || field === "mobile" ? "numeric" : "text"}
+                                className="w-full border border-gray-300 rounded-lg p-2 focus:ring-blue-400"
                             />
 
                             {errors[field] && (
-                                <p className="text-red-500 text-sm mt-1">
+                                <p className="text-red-500 text-[12px]">
                                     {errors[field]}
                                 </p>
                             )}
