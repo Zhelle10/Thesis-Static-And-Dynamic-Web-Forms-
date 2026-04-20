@@ -1,6 +1,5 @@
-import React from "react";
-import { useState } from "react";  
-import FormTimer from "/src/components/FormTimer"; 
+import React, { useState } from "react";
+import FormTimer from "/src/components/FormTimer";
 
 const StaticForm = () => {
     const [formData, setFormData] = useState({
@@ -18,21 +17,19 @@ const StaticForm = () => {
     });
 
     const [errors, setErrors] = useState({});
+    const [timeSpent, setTimeSpent] = useState(0); // ✅ ADD THIS
 
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // POSTCODE: only numbers + max 5 digits
         if (name === "postCode") {
             const onlyNumbers = value.replace(/\D/g, "");
-
             if (onlyNumbers.length <= 5) {
                 setFormData({ ...formData, postCode: onlyNumbers });
             }
             return;
         }
 
-        // MOBILE: only numbers
         if (name === "mobile") {
             const onlyNumbers = value.replace(/\D/g, "");
             setFormData({ ...formData, mobile: onlyNumbers });
@@ -52,17 +49,14 @@ const StaticForm = () => {
             }
         });
 
-        // ✅ POSTCODE RULE: 4–5 digits
         if (!/^\d{4,5}$/.test(formData.postCode)) {
             newErrors.postCode = "Postcode must be 4–5 digits";
         }
 
-        // ✅ MOBILE RULE: 11 digits
         if (!/^\d{8,11}$/.test(formData.mobile)) {
             newErrors.mobile = "Mobile number must be 8-11 digits";
         }
 
-        // ✅ PASSWORD VALIDATION
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 
         if (!passwordRegex.test(formData.password)) {
@@ -87,14 +81,19 @@ const StaticForm = () => {
             const res = await fetch("http://localhost:3000/api/static", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+
+                // ✅ SEND TIMER HERE
+                body: JSON.stringify({
+                    ...formData,
+                    timeSpent
+                }),
             });
 
             if (!res.ok) throw new Error("Server error");
 
             await res.json();
 
-            alert("✅ Static form submitted!");
+            alert(`✅ Submitted in ${timeSpent}s`);
 
             setFormData({
                 name: "",
@@ -111,6 +110,8 @@ const StaticForm = () => {
             });
 
             setErrors({});
+            setTimeSpent(0); // reset timer after submit
+
         } catch (error) {
             console.error(error);
             alert("❌ Failed to submit");
@@ -124,10 +125,13 @@ const StaticForm = () => {
                 <h1 className="text-[26px] font-bold text-center text-blue-600 mb-2">
                     Bite And Breakfast Inn
                 </h1>
-                <p className="text-center text-gray-600 mb-6">
+
+                <p className="text-center text-gray-600 mb-2">
                     “Where every bed comes with extra guests.”
                 </p>
-                <FormTimer />
+
+                {/* TIMER */}
+                <FormTimer onTimeUpdate={setTimeSpent} />
 
                 <div className="grid grid-cols-2 gap-1">
 
