@@ -2,24 +2,26 @@ import express from "express";
 import cors from "cors";
 
 const app = express();
+const PORT = 5000; // 🔁 better than 3000 for hotspot
 
 app.use(cors());
 app.use(express.json());
 
+// 🔥 LOG ALL REQUESTS
+app.use((req, res, next) => {
+  console.log(`📩 ${req.method} ${req.url}`);
+  next();
+});
+
 let staticForm = [];
-let dynamicForm = [];
 
 app.get("/", (req, res) => {
-  res.send("Backend is running");
+  res.send("Backend is running ✅");
 });
 
 app.post("/api/static", (req, res) => {
+  console.log("📦 DATA RECEIVED:", req.body);
   staticForm.push(req.body);
-  res.json({ success: true });
-});
-
-app.post("/api/dynamic", (req, res) => {
-  dynamicForm.push(req.body);
   res.json({ success: true });
 });
 
@@ -27,10 +29,6 @@ app.get("/api/static", (req, res) => {
   res.json(staticForm);
 });
 
-app.get("/api/dynamic", (req, res) => {
-  res.json(dynamicForm);
-});
-
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🌐 Server running on http://0.0.0.0:${PORT}`);
 });
