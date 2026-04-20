@@ -18,8 +18,19 @@ const StaticForm = () => {
     const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-        setErrors({ ...errors, [e.target.name]: "" }); // clear error while typing
+        const { name, value } = e.target;
+
+        // ✅ POSTCODE RULE: numbers only + max 5 digits
+        if (name === "postCode") {
+            const onlyNumbers = value.replace(/\D/g, ""); // remove letters
+            if (onlyNumbers.length > 5) return; // block extra digits
+
+            setFormData({ ...formData, postCode: onlyNumbers });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
+
+        setErrors({ ...errors, [name]: "" });
     };
 
     const validate = () => {
@@ -30,6 +41,11 @@ const StaticForm = () => {
                 newErrors[key] = "This field is required";
             }
         });
+
+        // ✅ postcode validation
+        if (!/^\d{5}$/.test(formData.postCode)) {
+            newErrors.postCode = "Postcode must be exactly 5 digits";
+        }
 
         if (formData.email !== formData.confirmEmail) {
             newErrors.confirmEmail = "Emails do not match";
@@ -42,7 +58,7 @@ const StaticForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!validate()) return; // stop submit if errors
+        if (!validate()) return;
 
         try {
             const res = await fetch("http://localhost:3000/api/static", {
@@ -85,7 +101,6 @@ const StaticForm = () => {
                 <h1 className="text-3xl font-bold text-center text-blue-600 mb-2">
                     The Bite And Breakfast Inn
                 </h1>
-                <p className="text-center text-gray-500 mb-6">“Where every bed comes with extra guests.”</p>
 
                 <div className="grid grid-cols-2 gap-4">
 
@@ -100,6 +115,7 @@ const StaticForm = () => {
                                 value={formData[field]}
                                 onChange={handleChange}
                                 type={field.includes("password") ? "password" : "text"}
+                                inputMode={field === "postCode" ? "numeric" : "text"}
                                 className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
                             />
 
