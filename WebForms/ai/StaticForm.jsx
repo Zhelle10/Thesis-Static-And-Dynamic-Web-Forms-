@@ -1,5 +1,4 @@
-import React from 'react'
-import { useState } from 'react';
+import React, { useState } from "react";
 
 const StaticForm = () => {
     const [formData, setFormData] = useState({
@@ -12,31 +11,52 @@ const StaticForm = () => {
         nationality: "",
         mobile: "",
         email: "",
+        confirmEmail: "",
         password: "",
-        nationality: "",
     });
+
+    const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+        setErrors({ ...errors, [e.target.name]: "" }); // clear error while typing
     };
+
+    const validate = () => {
+        let newErrors = {};
+
+        Object.keys(formData).forEach((key) => {
+            if (!formData[key].trim()) {
+                newErrors[key] = "This field is required";
+            }
+        });
+
+        if (formData.email !== formData.confirmEmail) {
+            newErrors.confirmEmail = "Emails do not match";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!validate()) return; // stop submit if errors
 
         try {
             const res = await fetch("http://localhost:3000/api/static", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
 
             if (!res.ok) throw new Error("Server error");
 
-            const data = await res.json();
-            console.log(data);
+            await res.json();
 
             alert("✅ Static form submitted!");
+
             setFormData({
                 name: "",
                 address: "",
@@ -47,17 +67,16 @@ const StaticForm = () => {
                 nationality: "",
                 mobile: "",
                 email: "",
+                confirmEmail: "",
                 password: "",
-                nationality: "",
             });
 
+            setErrors({});
         } catch (error) {
             console.error(error);
-            alert("❌ Failed to submit (backend not running?)");
+            alert("❌ Failed to submit");
         }
     };
-
-
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -68,148 +87,34 @@ const StaticForm = () => {
                 </h1>
                 <p className="text-center text-gray-500 mb-6">“Where every bed comes with extra guests.”</p>
 
-
-                {/* GRID START */}
                 <div className="grid grid-cols-2 gap-4">
 
-                    <div>
-                        <label className="text-sm text-gray-600">Fullname</label>
-                        <input
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            type="text"
-                            placeholder="Name"
-                            className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
+                    {Object.keys(formData).map((field) => (
+                        <div key={field} className={field === "password" ? "col-span-2" : ""}>
+                            <label className="text-sm text-gray-600 capitalize">
+                                {field}
+                            </label>
 
-                    <div>
-                        <label className="text-sm text-gray-600">Address</label>
-                        <input
-                            name="address"
-                            value={formData.address}
-                            onChange={handleChange}
-                            type="text"
-                            placeholder="Address"
-                            className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
+                            <input
+                                name={field}
+                                value={formData[field]}
+                                onChange={handleChange}
+                                type={field.includes("password") ? "password" : "text"}
+                                className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
+                            />
 
-                    <div>
-                        <label className="text-sm text-gray-600">Post code</label>
-                        <input
-                            name="postCode"
-                            value={formData.postCode}
-                            onChange={handleChange}
-                            type="text"
-                            placeholder="Post code"
-                            className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="text-sm text-gray-600">City</label>
-                        <input
-                            name="city"
-                            value={formData.city}
-                            onChange={handleChange}
-                            type="text"
-                            placeholder="City"
-                            className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="text-sm text-gray-600">State</label>
-                        <input
-                            name="state"
-                            value={formData.state}
-                            onChange={handleChange}
-                            type="text"
-                            placeholder="State"
-                            className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="text-sm text-gray-600">Country</label>
-                        <input
-                            name="country"
-                            value={formData.country}
-                            onChange={handleChange}
-                            type="text"
-                            placeholder="Country"
-                            className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="text-sm text-gray-600">Nationality</label>
-                        <input
-                            name="nationality"
-                            value={formData.nationality}
-                            onChange={handleChange}
-                            type="text"
-                            placeholder="Nationality"
-                            className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="text-sm text-gray-600">Mobile number</label>
-                        <input
-                            name="mobile"
-                            value={formData.mobile}
-                            onChange={handleChange}
-                            type="text"
-                            placeholder="Mobile number"
-                            className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="text-sm text-gray-600">Email</label>
-                        <input
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            type="email"
-                            placeholder="Email"
-                            className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="text-sm text-gray-600">Confirm Email</label>
-                        <input
-                            name="confirmEmail"
-                            value={formData.confirmEmail}
-                            onChange={handleChange}
-                            type="email"
-                            placeholder="Confirm Email"
-                            className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-
-                    {/* FULL WIDTH PASSWORD */}
-                    <div className="col-span-2">
-                        <label className="text-sm text-gray-600">Password</label>
-                        <input
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            type="password"
-                            placeholder="Password"
-                            className="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-
+                            {errors[field] && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors[field]}
+                                </p>
+                            )}
+                        </div>
+                    ))}
                 </div>
 
                 <button
                     onClick={handleSubmit}
-                    className="w-full bg-blue-600 hover:bg-blue-700 transition text-white font-semibold py-2 rounded-lg mt-6"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg mt-6"
                 >
                     Create Account
                 </button>
@@ -217,6 +122,6 @@ const StaticForm = () => {
             </form>
         </div>
     );
-}
+};
 
-export default StaticForm
+export default StaticForm;
