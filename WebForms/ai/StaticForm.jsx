@@ -1,5 +1,16 @@
+{
+    /* 
+       *ALWAYS change the URL/API address when changing hotspot or network. 
+  
+       *URL
+        backend: URL:5000 OR 5000/api/static to see the datas
+        frontend: URL:5153
+  */
+}
+
 import React, { useState } from "react";
 import FormTimer from "/src/components/FormTimer";
+import SuccessModal from "/src/components/SuccessModal";
 
 const API_URL = "http://192.168.0.197:5000"; // 🔁 change if IP changes. BACKEND: /api/static
 
@@ -21,6 +32,7 @@ const StaticForm = () => {
     const [errors, setErrors] = useState({});
     const [timeSpent, setTimeSpent] = useState(0);
     const [isTimerRunning, setIsTimerRunning] = useState(true);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -75,6 +87,29 @@ const StaticForm = () => {
         return Object.keys(newErrors).length === 0;
     };
 
+    // ✅ FIXED: modal close handler (MISSING BEFORE)
+    const handleCloseModal = () => {
+        setShowSuccess(false);
+
+        setFormData({
+            name: "",
+            address: "",
+            city: "",
+            postCode: "",
+            state: "",
+            country: "",
+            nationality: "",
+            mobile: "",
+            email: "",
+            confirmEmail: "",
+            password: "",
+        });
+
+        setErrors({});
+        setTimeSpent(0);
+        setIsTimerRunning(true);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -103,36 +138,27 @@ const StaticForm = () => {
                 throw new Error(data.message || "Server error");
             }
 
-            alert(`✅ Submitted in ${timeSpent}s`);
-
-            setFormData({
-                name: "",
-                address: "",
-                city: "",
-                postCode: "",
-                state: "",
-                country: "",
-                nationality: "",
-                mobile: "",
-                email: "",
-                confirmEmail: "",
-                password: "",
-            });
-
-            setErrors({});
-            setTimeSpent(0);
+            // ✅ SHOW MODAL ONLY HERE
+            setShowSuccess(true);
 
         } catch (error) {
             console.error("❌ FULL ERROR:", error);
             alert("❌ " + error.message);
         }
     };
-    
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
+
+            {/* ✅ MODAL MUST BE HERE (NOT INSIDE handleSubmit) */}
+            <SuccessModal
+                isOpen={showSuccess}
+                onClose={handleCloseModal}
+                timeSpent={timeSpent}
+            />
+
             <form
-                onSubmit={handleSubmit}  // ✅ FIXED
+                onSubmit={handleSubmit}
                 className="bg-white shadow-xl rounded-2xl px-8 py-6 w-full max-w-3xl"
             >
 
@@ -175,7 +201,7 @@ const StaticForm = () => {
                 </div>
 
                 <button
-                    type="submit"  // ✅ FIXED
+                    type="submit"
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg mt-6"
                 >
                     Create Account
