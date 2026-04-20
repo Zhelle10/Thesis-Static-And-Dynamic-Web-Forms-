@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import FormTimer from "/src/components/FormTimer";
 
-const API_URL = "http://10.99.13.188:5000"; // 🔁 change if IP changes
+const API_URL = "http://10.99.13.188:5000"; // 🔁 change if IP changes. BACKEND: /api/static
 
 const StaticForm = () => {
     const [formData, setFormData] = useState({
