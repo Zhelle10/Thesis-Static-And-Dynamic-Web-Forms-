@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 
-const FormTimer = ({ onTimeUpdate }) => {
+const FormTimer = ({ onTimeUpdate, isRunning }) => {
     const [seconds, setSeconds] = useState(0);
 
     useEffect(() => {
+        if (!isRunning) return; // ⛔ stop timer if not running
+
         const interval = setInterval(() => {
             setSeconds((prev) => prev + 1);
         }, 1000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [isRunning]);
 
-    // send time to parent (optional)
     useEffect(() => {
         if (onTimeUpdate) {
             onTimeUpdate(seconds);
