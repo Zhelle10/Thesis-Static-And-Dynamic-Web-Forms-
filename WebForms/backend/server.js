@@ -17,6 +17,13 @@ const PORT = 5000; // 🔁 better than 3000 for hotspot
 app.use(cors());
 app.use(express.json());
 
+const formatTime = (seconds) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+
+  return `${mins}m ${secs < 10 ? "0" : ""}${secs}s`;
+};
+
 // 🔥 LOG ALL REQUESTS
 app.use((req, res, next) => {
   console.log(`📩 ${req.method} ${req.url}`);
@@ -31,7 +38,14 @@ app.get("/", (req, res) => {
 
 app.post("/api/static", (req, res) => {
   console.log("📦 DATA RECEIVED:", req.body);
-  staticForm.push(req.body);
+
+  const formattedData = {
+    ...req.body,
+    timeSpent: formatTime(req.body.timeSpent),
+  };
+
+  staticForm.push(formattedData);
+
   res.json({ success: true });
 });
 

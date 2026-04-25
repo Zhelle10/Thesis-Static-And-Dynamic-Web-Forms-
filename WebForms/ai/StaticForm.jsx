@@ -11,6 +11,7 @@
 import React, { useState } from "react";
 import FormTimer from "/src/components/FormTimer";
 import SuccessModal from "/src/components/SuccessModal";
+import ErrorModal from "/src/components/ErrorModal";
 
 const API_URL = "http://192.168.0.197:5000"; // 🔁 change if IP changes. BACKEND: /api/static
 
@@ -33,6 +34,8 @@ const StaticForm = () => {
     const [timeSpent, setTimeSpent] = useState(0);
     const [isTimerRunning, setIsTimerRunning] = useState(true);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -114,7 +117,8 @@ const StaticForm = () => {
         e.preventDefault();
 
         if (!validate()) {
-            alert("❌ Please fix form errors");
+            setErrorMessage("Please fix the errors and try again.");
+            setShowError(true);
             return;
         }
 
@@ -143,8 +147,14 @@ const StaticForm = () => {
 
         } catch (error) {
             console.error("❌ FULL ERROR:", error);
-            alert("❌ " + error.message);
+            setErrorMessage(error.message);
+            setShowError(true);
         }
+
+    };
+    const handleCloseError = () => {
+        setShowError(false);
+        setErrorMessage("");
     };
 
     return (
@@ -155,6 +165,11 @@ const StaticForm = () => {
                 isOpen={showSuccess}
                 onClose={handleCloseModal}
                 timeSpent={timeSpent}
+            />
+            <ErrorModal
+                isOpen={showError}
+                onClose={handleCloseError}
+                message={errorMessage}
             />
 
             <form
