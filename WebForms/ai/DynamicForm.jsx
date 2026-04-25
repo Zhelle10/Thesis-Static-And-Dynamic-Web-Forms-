@@ -83,9 +83,10 @@ const DynamicForm = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-3 sm:p-6">
+
             <form
                 onSubmit={handleSubmit}
-                className="w-full max-w-2xl bg-white p-4 sm:p-6 rounded-xl shadow-md"
+                className="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-4 sm:p-6 md:p-8"
             >
                 <h1 className="text-xl sm:text-2xl md:text-[26px] font-bold text-center text-blue-600 mb-2">
                     Bite And Breakfast Inn
@@ -95,10 +96,10 @@ const DynamicForm = () => {
                     “Where every bed comes with extra guests.”
                 </p>
 
-                {/* GLOBAL EMAIL WARNING */}
+                {/* EMAIL WARNING (styled like StaticForm area) */}
                 {showEmailWarning && (
-                    <p className="text-center text-red-500 text-sm mb-2 px-2">
-                        Please enter valid email address
+                    <p className="text-center text-[white] text-sm mb-2 bg-[#520C00] rounded-lg p-2" >
+                         Please review and complete the highlighted information.
                     </p>
                 )}
 
@@ -107,26 +108,34 @@ const DynamicForm = () => {
                     isRunning={isTimerRunning}
                 />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-5 sm:mt-6">
+                {/* EXACT SAME GRID STYLE AS STATIC FORM */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4">
                     {Object.keys(formData).map((field) => (
-                        <div key={field} className="flex flex-col">
+                        <div
+                            key={field}
+                            className={field === "password" ? "sm:col-span-2" : ""}
+                        >
+                            <label className="text-xs sm:text-sm text-gray-600 capitalize">
+                                {field}
+                            </label>
+
                             <input
-                                type={
-                                    field.includes("password")
-                                        ? "password"
-                                        : "text"
-                                }
                                 name={field}
                                 value={formData[field]}
                                 onChange={handleChange}
-                                placeholder={field}
-                                className="border p-3 rounded-md text-sm sm:text-base focus:outline-blue-500 w-full"
+                                type={field.includes("password") ? "password" : "text"}
+                                inputMode={
+                                    field === "postCode" || field === "mobile"
+                                        ? "numeric"
+                                        : "text"
+                                }
+                                className="w-full border border-gray-300 rounded-lg p-3 text-sm sm:text-base focus:outline-blue-500"
                             />
 
                             {errors[field] && (
-                                <span className="text-red-500 text-xs sm:text-sm mt-1">
+                                <p className="text-red-500 text-[11px] sm:text-xs mt-1">
                                     {errors[field]}
-                                </span>
+                                </p>
                             )}
                         </div>
                     ))}
@@ -134,7 +143,7 @@ const DynamicForm = () => {
 
                 <button
                     type="submit"
-                    className="w-full mt-5 sm:mt-6 bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700 transition text-sm sm:text-base"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg mt-6 text-sm sm:text-base"
                 >
                     Submit
                 </button>

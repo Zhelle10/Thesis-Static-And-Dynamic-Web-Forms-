@@ -1,19 +1,9 @@
-{
-    /* 
-       *ALWAYS change the URL/API address when changing hotspot or network. 
-  
-       *URL
-        backend: URL:5000 OR 5000/api/static to see the datas
-        frontend: URL:5153
-  */
-}
-
 import React, { useState } from "react";
 import FormTimer from "/src/components/FormTimer";
 import SuccessModal from "/src/components/SuccessModal";
 import ErrorModal from "/src/components/ErrorModal";
 
-const API_URL = "http://192.168.0.197:5000"; // 🔁 change if IP changes. BACKEND: /api/static
+const API_URL = "http://192.168.0.197:5000"; // 🔁 change if IP changes
 
 const StaticForm = () => {
     const [formData, setFormData] = useState({
@@ -90,7 +80,6 @@ const StaticForm = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    // ✅ FIXED: modal close handler (MISSING BEFORE)
     const handleCloseModal = () => {
         setShowSuccess(false);
 
@@ -124,48 +113,38 @@ const StaticForm = () => {
 
         setIsTimerRunning(false);
 
-        console.log("📤 Sending data:", { ...formData, timeSpent });
-
         try {
             const res = await fetch(`${API_URL}/api/static`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    ...formData,
-                    timeSpent
-                }),
+                body: JSON.stringify({ ...formData, timeSpent }),
             });
 
             const data = await res.json();
 
-            if (!res.ok) {
-                throw new Error(data.message || "Server error");
-            }
+            if (!res.ok) throw new Error(data.message || "Server error");
 
-            // ✅ SHOW MODAL ONLY HERE
             setShowSuccess(true);
-
         } catch (error) {
-            console.error("❌ FULL ERROR:", error);
             setErrorMessage(error.message);
             setShowError(true);
         }
-
     };
+
     const handleCloseError = () => {
         setShowError(false);
         setErrorMessage("");
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 p-3 sm:p-6">
 
-            {/* ✅ MODAL MUST BE HERE (NOT INSIDE handleSubmit) */}
             <SuccessModal
                 isOpen={showSuccess}
                 onClose={handleCloseModal}
                 timeSpent={timeSpent}
             />
+
             <ErrorModal
                 isOpen={showError}
                 onClose={handleCloseError}
@@ -174,14 +153,13 @@ const StaticForm = () => {
 
             <form
                 onSubmit={handleSubmit}
-                className="bg-white shadow-xl rounded-2xl px-8 py-6 w-full max-w-3xl"
+                className="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-4 sm:p-6 md:p-8"
             >
-
-                <h1 className="text-[26px] font-bold text-center text-blue-600 mb-2">
+                <h1 className="text-xl sm:text-2xl md:text-[26px] font-bold text-center text-blue-600 mb-2">
                     Bite And Breakfast Inn
                 </h1>
 
-                <p className="text-center text-gray-600 mb-2">
+                <p className="text-center text-gray-600 text-sm sm:text-base mb-2">
                     “Where every bed comes with extra guests.”
                 </p>
 
@@ -190,10 +168,14 @@ const StaticForm = () => {
                     isRunning={isTimerRunning}
                 />
 
-                <div className="grid grid-cols-2 gap-1">
+                {/* RESPONSIVE GRID */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4">
                     {Object.keys(formData).map((field) => (
-                        <div key={field} className={field === "password" ? "col-span-2" : ""}>
-                            <label className="text-sm text-gray-600 capitalize">
+                        <div
+                            key={field}
+                            className={field === "password" ? "sm:col-span-2" : ""}
+                        >
+                            <label className="text-xs sm:text-sm text-gray-600 capitalize">
                                 {field}
                             </label>
 
@@ -202,12 +184,16 @@ const StaticForm = () => {
                                 value={formData[field]}
                                 onChange={handleChange}
                                 type={field.includes("password") ? "password" : "text"}
-                                inputMode={field === "postCode" || field === "mobile" ? "numeric" : "text"}
-                                className="w-full border border-gray-300 rounded-lg p-2"
+                                inputMode={
+                                    field === "postCode" || field === "mobile"
+                                        ? "numeric"
+                                        : "text"
+                                }
+                                className="w-full border border-gray-300 rounded-lg p-3 text-sm sm:text-base focus:outline-blue-500"
                             />
 
                             {errors[field] && (
-                                <p className="text-red-500 text-[12px]">
+                                <p className="text-red-500 text-[11px] sm:text-xs mt-1">
                                     {errors[field]}
                                 </p>
                             )}
@@ -217,11 +203,10 @@ const StaticForm = () => {
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg mt-6"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg mt-6 text-sm sm:text-base"
                 >
                     Create Account
                 </button>
-
             </form>
         </div>
     );
