@@ -162,7 +162,7 @@ const StaticForm = () => {
                 onSubmit={handleSubmit}
                 className="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-4 sm:p-6 md:p-8"
             >
-                <h1>Static Form</h1>
+                <p className="text-xs sm:text-sm text-gray-600 text-center text-white bg-blue-600 py-1">Static Form</p>
 
                 <h1 className="text-xl sm:text-2xl md:text-[26px] font-bold text-center text-blue-600 mb-2">
                     Bite And Breakfast Inn
