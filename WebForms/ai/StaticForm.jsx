@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import FormTimer from "/src/components/FormTimer";
 import SuccessModal from "/src/components/SuccessModal";
 import ErrorModal from "/src/components/ErrorModal";
@@ -26,6 +27,8 @@ const StaticForm = () => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -100,6 +103,9 @@ const StaticForm = () => {
         setErrors({});
         setTimeSpent(0);
         setIsTimerRunning(true);
+
+        // ✅ ADDED: redirect after clicking OK
+        navigate("/dynamic");
     };
 
     const handleSubmit = async (e) => {
@@ -124,6 +130,7 @@ const StaticForm = () => {
 
             if (!res.ok) throw new Error(data.message || "Server error");
 
+            console.log("✅ Static form submitted:", { ...formData, timeSpent  });
             setShowSuccess(true);
         } catch (error) {
             setErrorMessage(error.message);
@@ -155,6 +162,8 @@ const StaticForm = () => {
                 onSubmit={handleSubmit}
                 className="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-4 sm:p-6 md:p-8"
             >
+                <h1>Static Form</h1>
+
                 <h1 className="text-xl sm:text-2xl md:text-[26px] font-bold text-center text-blue-600 mb-2">
                     Bite And Breakfast Inn
                 </h1>
@@ -168,7 +177,6 @@ const StaticForm = () => {
                     isRunning={isTimerRunning}
                 />
 
-                {/* RESPONSIVE GRID */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4">
                     {Object.keys(formData).map((field) => (
                         <div

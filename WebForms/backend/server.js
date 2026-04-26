@@ -1,18 +1,8 @@
-{
-  /* 
-     *ALWAYS change the URL/API address when changing hotspot or network. 
-
-     *URL
-      backend: URL:5000 OR 5000/api/static to see the datas
-      frontend: URL:5153
-*/
-}
-
 import express from "express";
 import cors from "cors";
 
 const app = express();
-const PORT = 5000; // 🔁 better than 3000 for hotspot
+const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -20,7 +10,6 @@ app.use(express.json());
 const formatTime = (seconds) => {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
-
   return `${mins}m ${secs < 10 ? "0" : ""}${secs}s`;
 };
 
@@ -30,10 +19,26 @@ app.use((req, res, next) => {
   next();
 });
 
+// ✅ STORAGE
 let staticForm = [];
+let dynamicForm = []; // ✅ ADD THIS
 
 app.get("/", (req, res) => {
   res.send("Backend is running ✅");
+});
+
+// ✅ FIXED
+app.post("/api/dynamic", (req, res) => {
+  console.log("📦 DYNAMIC DATA RECEIVED:", req.body);
+
+  const formattedData = {
+    ...req.body,
+    timeSpent: formatTime(req.body.timeSpent),
+  };
+
+  dynamicForm.push(formattedData); // ✅ FIXED
+
+  res.json({ success: true });
 });
 
 app.post("/api/static", (req, res) => {
@@ -47,6 +52,11 @@ app.post("/api/static", (req, res) => {
   staticForm.push(formattedData);
 
   res.json({ success: true });
+});
+
+// ✅ FIXED
+app.get("/api/dynamic", (req, res) => {
+  res.json(dynamicForm); // ✅ FIXED
 });
 
 app.get("/api/static", (req, res) => {

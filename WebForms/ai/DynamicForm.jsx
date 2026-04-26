@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import FormTimer from "/src/components/FormTimer";
+import SuccessModal from "/src/components/SuccessModal";
+import ErrorModal from "/src/components/ErrorModal";
 
 const DynamicForm = () => {
     const [formData, setFormData] = useState({
@@ -19,18 +22,52 @@ const DynamicForm = () => {
     const [errors, setErrors] = useState({});
     const [isTimerRunning, setIsTimerRunning] = useState(true);
     const [timeSpent, setTimeSpent] = useState(0);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const navigate = useNavigate();
 
     const isValidEmail = (email) => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     };
 
+    const getPasswordStrength = (password) => {
+        let score = 0;
+
+        if (password.length >= 8) score++;
+        if (/[A-Z]/.test(password)) score++;
+        if (/\d/.test(password)) score++;
+        if (/[^A-Za-z0-9]/.test(password)) score++;
+
+        if (score <= 1)
+            return { label: "Weak", color: "text-red-500", bar: "bg-red-500", width: "25%" };
+
+        if (score === 2 || score === 3)
+            return { label: "Medium", color: "text-yellow-500", bar: "bg-yellow-500", width: "60%" };
+
+        return { label: "Strong", color: "text-green-500", bar: "bg-green-500", width: "100%" };
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        if (name === "postCode") {
+            const onlyNumbers = value.replace(/\D/g, "");
+            if (onlyNumbers.length <= 5) {
+                setFormData({ ...formData, postCode: onlyNumbers });
+            }
+            return;
+        }
+
+        if (name === "mobile") {
+            const onlyNumbers = value.replace(/\D/g, "");
+            setFormData({ ...formData, mobile: onlyNumbers });
+            return;
+        }
+
+        setFormData({ ...formData, [name]: value });
+        setErrors({ ...errors, [name]: "" });
 
         if (name === "email") {
             if (value.length > 0 && !isValidEmail(value)) {
@@ -63,26 +100,116 @@ const DynamicForm = () => {
             }
         }
 
+        if (!/^\d{4,5}$/.test(formData.postCode)) {
+            newErrors.postCode = "Postcode must be 4–5 digits";
+        }
+
+        if (!/^\d{8,11}$/.test(formData.mobile)) {
+            newErrors.mobile = "Mobile number must be 8-11 digits";
+        }
+
+        const passwordStrengthCheck = getPasswordStrength(formData.password);
+        if (passwordStrengthCheck.label === "Weak") {
+            newErrors.password = "Password must be Medium or Strong";
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!validate()) return;
+        if (!validate()) {
+            setErrorMessage("Please fix the errors and try again.");
+            setShowError(true);
+            return;
+        }
 
         setIsTimerRunning(false);
 
-        console.log("Submitted Data:", formData);
-        console.log("Time spent:", timeSpent);
+        try {
+            const res = await fetch("http://localhost:5000/api/dynamic", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    ...formData,
+                    timeSpent,
+                }),
+            });
+
+            if (!res.ok) throw new Error("Server error");
+
+            setShowSuccess(true);
+
+            console.log("Form submitted successfully:", { ...formData, timeSpent });    
+
+        } catch (error) {
+            setErrorMessage(error.message);
+            setShowError(true);
+        }
+    };
+
+    // ✅ SUCCESS MODAL CLOSE
+    const handleCloseModal = () => {
+        setShowSuccess(false);
+
+        setFormData({
+            name: "",
+            address: "",
+            city: "",
+            postCode: "",
+            state: "",
+            country: "",
+            nationality: "",
+            mobile: "",
+            email: "",
+            confirmEmail: "",
+            password: "",
+        });
+
+        setErrors({});
+        setTimeSpent(0);
+        setIsTimerRunning(true);
+
+        navigate("/thankYou"); // 👈 redirect after OK
+    };
+
+    // ❌ ERROR MODAL CLOSE
+    const handleCloseError = () => {
+        setShowError(false);
+        setErrorMessage("");
     };
 
     const showEmailWarning =
         formData.email.length > 0 && !isValidEmail(formData.email);
 
+    const passwordStrength = getPasswordStrength(formData.password);
+
+    const showEmailMatchMessage =
+        formData.confirmEmail.length > 0 && formData.email.length > 0;
+
+    const isEmailMatch =
+        formData.email === formData.confirmEmail;
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-3 sm:p-6">
+
+            {/* ✅ MODALS FIXED */}
+            <SuccessModal
+                isOpen={showSuccess}
+                onClose={handleCloseModal}
+                timeSpent={timeSpent}
+               
+            />
+
+            <ErrorModal
+                isOpen={showError}
+                onClose={handleCloseError}
+                message={errorMessage}
+            />
 
             <form
                 onSubmit={handleSubmit}
@@ -96,20 +223,12 @@ const DynamicForm = () => {
                     “Where every bed comes with extra guests.”
                 </p>
 
-                {/* EMAIL WARNING (styled like StaticForm area) */}
-                {showEmailWarning && (
-                    <p className="text-center text-[white] text-sm mb-2 bg-[#520C00] rounded-lg p-2" >
-                         Please review and complete the highlighted information.
-                    </p>
-                )}
-
                 <FormTimer
                     onTimeUpdate={setTimeSpent}
                     isRunning={isTimerRunning}
                 />
 
-                {/* EXACT SAME GRID STYLE AS STATIC FORM */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-4 mt-4">
                     {Object.keys(formData).map((field) => (
                         <div
                             key={field}
@@ -131,6 +250,30 @@ const DynamicForm = () => {
                                 }
                                 className="w-full border border-gray-300 rounded-lg p-3 text-sm sm:text-base focus:outline-blue-500"
                             />
+
+                            {field === "confirmEmail" && showEmailMatchMessage && (
+                                <p
+                                    className={`text-[11px] sm:text-xs mt-1 ${isEmailMatch ? "text-green-500" : "text-red-500"
+                                        }`}
+                                >
+                                    {isEmailMatch ? "Emails matched" : "Emails do not match"}
+                                </p>
+                            )}
+
+                            {field === "password" && formData.password.length > 0 && (
+                                <div className="mt-2">
+                                    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                        <div
+                                            className={`h-full transition-all duration-300 ${passwordStrength.bar}`}
+                                            style={{ width: passwordStrength.width }}
+                                        />
+                                    </div>
+
+                                    <p className={`text-xs mt-1 ${passwordStrength.color}`}>
+                                        Password Strength: {passwordStrength.label}
+                                    </p>
+                                </div>
+                            )}
 
                             {errors[field] && (
                                 <p className="text-red-500 text-[11px] sm:text-xs mt-1">
