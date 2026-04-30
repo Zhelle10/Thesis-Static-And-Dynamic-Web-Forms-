@@ -29,7 +29,7 @@ const WelcomeMessage = () => {
 
                 <button
                     className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200"
-                    onClick={() => navigate("/static")}
+                    onClick={() => navigate("/dynamic")}
                 >
                     Start Testing
                 </button>

@@ -191,7 +191,7 @@ const DynamicForm = () => {
         setTimeSpent(0);
         setIsTimerRunning(true);
 
-        navigate("/thankYou"); // 👈 redirect after OK
+        navigate("/static"); // 👈 redirect after OK
     };
 
     // ❌ ERROR MODAL CLOSE

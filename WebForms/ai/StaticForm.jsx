@@ -105,7 +105,7 @@ const StaticForm = () => {
         setIsTimerRunning(true);
 
         // ✅ ADDED: redirect after clicking OK
-        navigate("/dynamic");
+        navigate("/thankYou");
     };
 
     const handleSubmit = async (e) => {
