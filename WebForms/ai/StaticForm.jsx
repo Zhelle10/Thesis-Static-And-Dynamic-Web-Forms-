@@ -143,6 +143,11 @@ const StaticForm = () => {
         setErrorMessage("");
     };
 
+    const labels = {
+        confirmEmail: "Confirm Email",
+        postCode: "Post Code",
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-3 sm:p-6">
 
@@ -183,8 +188,12 @@ const StaticForm = () => {
                             key={field}
                             className={field === "password" ? "sm:col-span-2" : ""}
                         >
-                            <label className="text-xs sm:text-sm text-gray-600 capitalize">
-                                {field}
+                            <label className="text-xs sm:text-sm text-gray-600">
+                                {labels[field] ||
+                                    field
+                                        .replace(/([A-Z])/g, " $1")
+                                        .replace(/^./, (str) => str.toUpperCase())
+                                }
                             </label>
 
                             <input
