@@ -33,20 +33,35 @@ const DynamicForm = () => {
     };
 
     const getPasswordStrength = (password) => {
-        let score = 0;
+        const hasLength = password.length >= 8;
+        const hasUpper = /[A-Z]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasSpecial = /[^A-Za-z0-9]/.test(password);
 
-        if (password.length >= 8) score++;
-        if (/[A-Z]/.test(password)) score++;
-        if (/\d/.test(password)) score++;
-        if (/[^A-Za-z0-9]/.test(password)) score++;
+        if (hasLength && hasUpper && hasNumber && hasSpecial) {
+            return {
+                label: "Strong",
+                color: "text-green-500",
+                bar: "bg-green-500",
+                width: "100%",
+            };
+        }
 
-        if (score <= 1)
-            return { label: "Weak", color: "text-red-500", bar: "bg-red-500", width: "25%" };
+        if (password.length > 0) {
+            return {
+                label: "Weak",
+                color: "text-red-500",
+                bar: "bg-red-500",
+                width: "40%",
+            };
+        }
 
-        if (score === 2 || score === 3)
-            return { label: "Medium", color: "text-yellow-500", bar: "bg-yellow-500", width: "60%" };
-
-        return { label: "Strong", color: "text-green-500", bar: "bg-green-500", width: "100%" };
+        return {
+            label: "",
+            color: "",
+            bar: "",
+            width: "0%",
+        };
     };
 
     const handleChange = (e) => {
@@ -109,8 +124,10 @@ const DynamicForm = () => {
         }
 
         const passwordStrengthCheck = getPasswordStrength(formData.password);
-        if (passwordStrengthCheck.label === "Weak") {
-            newErrors.password = "Password must be Medium or Strong";
+
+        if (passwordStrengthCheck.label !== "Strong") {
+            newErrors.password =
+                "Password must be at least 8 characters and include 1 uppercase letter, 1 number, and 1 special character";
         }
 
         setErrors(newErrors);
@@ -194,7 +211,7 @@ const DynamicForm = () => {
     const isEmailMatch =
         formData.email === formData.confirmEmail;
 
-    
+
     const labels = {
         confirmEmail: "Confirm Email",
         postCode: "Post Code",
