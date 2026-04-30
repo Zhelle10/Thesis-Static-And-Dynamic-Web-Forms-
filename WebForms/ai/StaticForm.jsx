@@ -191,11 +191,18 @@ const StaticForm = () => {
                                 name={field}
                                 value={formData[field]}
                                 onChange={handleChange}
-                                type={field.includes("password") ? "password" : "text"}
+                                type={field.includes("password") ? "password" : field.includes("email") ? "email" : "text"}
                                 inputMode={
                                     field === "postCode" || field === "mobile"
                                         ? "numeric"
                                         : "text"
+                                }
+                                autoComplete={
+                                    field === "confirmEmail"
+                                        ? "new-email"
+                                        : field === "email"
+                                            ? "email"
+                                            : "off"
                                 }
                                 className="w-full border border-gray-300 rounded-lg p-3 text-sm sm:text-base focus:outline-blue-500"
                             />
