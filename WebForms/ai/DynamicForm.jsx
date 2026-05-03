@@ -29,6 +29,7 @@ const DynamicForm = () => {
     const [showError, setShowError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const navigate = useNavigate();
 
@@ -298,13 +299,17 @@ const DynamicForm = () => {
                                     value={formData[field]}
                                     onChange={handleChange}
                                     type={
-                                        field.toLowerCase().includes("password")
+                                        field === "password"
                                             ? showPassword
                                                 ? "text"
                                                 : "password"
-                                            : field.includes("email")
-                                                ? "email"
-                                                : "text"
+                                            : field === "confirmPassword"
+                                                ? showConfirmPassword
+                                                    ? "text"
+                                                    : "password"
+                                                : field.includes("email")
+                                                    ? "email"
+                                                    : "text"
                                     }
                                     inputMode={
                                         field === "postCode" || field === "mobile"
@@ -321,7 +326,7 @@ const DynamicForm = () => {
                                     className="w-full border border-gray-300 rounded-lg p-3 pr-12 text-sm sm:text-base focus:outline-blue-500"
                                 />
 
-                                {field.toLowerCase().includes("password") && (
+                                {field === "password" && (
                                     <span
                                         className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-blue-600 cursor-pointer select-none"
                                         onMouseDown={() => setShowPassword(true)}
@@ -329,6 +334,19 @@ const DynamicForm = () => {
                                         onMouseLeave={() => setShowPassword(false)}
                                         onTouchStart={() => setShowPassword(true)}
                                         onTouchEnd={() => setShowPassword(false)}
+                                    >
+                                        Show
+                                    </span>
+                                )}
+
+                                {field === "confirmPassword" && (
+                                    <span
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-blue-600 cursor-pointer select-none"
+                                        onMouseDown={() => setShowConfirmPassword(true)}
+                                        onMouseUp={() => setShowConfirmPassword(false)}
+                                        onMouseLeave={() => setShowConfirmPassword(false)}
+                                        onTouchStart={() => setShowConfirmPassword(true)}
+                                        onTouchEnd={() => setShowConfirmPassword(false)}
                                     >
                                         Show
                                     </span>
