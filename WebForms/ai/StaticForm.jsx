@@ -4,7 +4,7 @@ import FormTimer from "/src/components/FormTimer";
 import SuccessModal from "/src/components/SuccessModal";
 import ErrorModal from "/src/components/ErrorModal";
 
-const API_URL = "http://192.168.0.197:5000"; // 🔁 change if IP changes
+const API_URL = "http://192.168.38.229:5000"; // 🔁 change if IP changes
 
 const StaticForm = () => {
     const [formData, setFormData] = useState({

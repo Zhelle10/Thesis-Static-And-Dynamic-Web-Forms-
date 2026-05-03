@@ -4,6 +4,8 @@ import FormTimer from "/src/components/FormTimer";
 import SuccessModal from "/src/components/SuccessModal";
 import ErrorModal from "/src/components/ErrorModal";
 
+const API_URL = "http://192.168.38.229:5000"; // 🔁 change if IP changes
+
 const DynamicForm = () => {
     const [formData, setFormData] = useState({
         name: "",
@@ -146,7 +148,7 @@ const DynamicForm = () => {
         setIsTimerRunning(false);
 
         try {
-            const res = await fetch("http://localhost:5000/api/dynamic", {
+            const res = await fetch(`${API_URL}/api/dynamic`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
