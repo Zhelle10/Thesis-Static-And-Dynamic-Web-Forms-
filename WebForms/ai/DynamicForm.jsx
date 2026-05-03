@@ -28,6 +28,7 @@ const DynamicForm = () => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
     const navigate = useNavigate();
 
@@ -291,31 +292,48 @@ const DynamicForm = () => {
                                 }
                             </label>
 
-                            <input
-                                name={field}
-                                value={formData[field]}
-                                onChange={handleChange}
-                                type={
-                                    field.toLowerCase().includes("password")
-                                        ? "password"
-                                        : field.includes("email")
-                                            ? "email"
+                            <div className="relative">
+                                <input
+                                    name={field}
+                                    value={formData[field]}
+                                    onChange={handleChange}
+                                    type={
+                                        field.toLowerCase().includes("password")
+                                            ? showPassword
+                                                ? "text"
+                                                : "password"
+                                            : field.includes("email")
+                                                ? "email"
+                                                : "text"
+                                    }
+                                    inputMode={
+                                        field === "postCode" || field === "mobile"
+                                            ? "numeric"
                                             : "text"
-                                }
-                                inputMode={
-                                    field === "postCode" || field === "mobile"
-                                        ? "numeric"
-                                        : "text"
-                                }
-                                autoComplete={
-                                    field === "confirmEmail"
-                                        ? "new-email"
-                                        : field === "email"
-                                            ? "email"
-                                            : "off"
-                                }
-                                className="w-full border border-gray-300 rounded-lg p-3 text-sm sm:text-base focus:outline-blue-500"
-                            />
+                                    }
+                                    autoComplete={
+                                        field === "confirmEmail"
+                                            ? "new-email"
+                                            : field === "email"
+                                                ? "email"
+                                                : "off"
+                                    }
+                                    className="w-full border border-gray-300 rounded-lg p-3 pr-12 text-sm sm:text-base focus:outline-blue-500"
+                                />
+
+                                {field.toLowerCase().includes("password") && (
+                                    <span
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-blue-600 cursor-pointer select-none"
+                                        onMouseDown={() => setShowPassword(true)}
+                                        onMouseUp={() => setShowPassword(false)}
+                                        onMouseLeave={() => setShowPassword(false)}
+                                        onTouchStart={() => setShowPassword(true)}
+                                        onTouchEnd={() => setShowPassword(false)}
+                                    >
+                                        Show
+                                    </span>
+                                )}
+                            </div>
 
                             {field === "confirmPassword" && showPasswordMatchMessage && (
                                 <p
