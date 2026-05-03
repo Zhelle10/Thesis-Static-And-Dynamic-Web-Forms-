@@ -212,9 +212,9 @@ const DynamicForm = () => {
         setErrorMessage("");
     };
 
-    const showEmailWarning =
+    /*const showEmailWarning =
         formData.email.length > 0 && !isValidEmail(formData.email);
-
+    */
     const passwordStrength = getPasswordStrength(formData.password);
 
     const passwordChecks = {
