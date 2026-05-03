@@ -203,7 +203,7 @@ const DynamicForm = () => {
 
         navigate("/static"); // 👈 redirect after OK
     };
-    
+
     // ❌ ERROR MODAL CLOSE
     const handleCloseError = () => {
         setShowError(false);
@@ -215,11 +215,24 @@ const DynamicForm = () => {
 
     const passwordStrength = getPasswordStrength(formData.password);
 
+    const passwordChecks = {
+        length: formData.password.length >= 8,
+        upper: /[A-Z]/.test(formData.password),
+        number: /\d/.test(formData.password),
+        special: /[^A-Za-z0-9]/.test(formData.password),
+    };
+
     const showEmailMatchMessage =
         formData.confirmEmail.length > 0 && formData.email.length > 0;
 
     const isEmailMatch =
         formData.email === formData.confirmEmail;
+
+    const showPasswordMatchMessage =
+        formData.confirmPassword.length > 0 && formData.password.length > 0;
+
+    const isPasswordMatch =
+        formData.password === formData.confirmPassword;
 
 
     const labels = {
@@ -304,6 +317,15 @@ const DynamicForm = () => {
                                 className="w-full border border-gray-300 rounded-lg p-3 text-sm sm:text-base focus:outline-blue-500"
                             />
 
+                            {field === "confirmPassword" && showPasswordMatchMessage && (
+                                <p
+                                    className={`text-[11px] sm:text-xs mt-1 ${isPasswordMatch ? "text-green-500" : "text-red-500"
+                                        }`}
+                                >
+                                    {isPasswordMatch ? "Passwords matched" : "Passwords do not match"}
+                                </p>
+                            )}
+
                             {field === "confirmEmail" && showEmailMatchMessage && (
                                 <p
                                     className={`text-[11px] sm:text-xs mt-1 ${isEmailMatch ? "text-green-500" : "text-red-500"
@@ -314,7 +336,8 @@ const DynamicForm = () => {
                             )}
 
                             {field === "password" && formData.password.length > 0 && (
-                                <div className="mt-2">
+                                <div className="mt-2 space-y-2">
+
                                     <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                                         <div
                                             className={`h-full transition-all duration-300 ${passwordStrength.bar}`}
@@ -322,9 +345,25 @@ const DynamicForm = () => {
                                         />
                                     </div>
 
-                                    <p className={`text-xs mt-1 ${passwordStrength.color}`}>
+                                    <p className={`text-xs ${passwordStrength.color}`}>
                                         Password Strength: {passwordStrength.label}
                                     </p>
+
+                                    <div className="text-[11px] sm:text-xs space-y-1">
+                                        <p className={passwordChecks.length ? "text-green-500" : "text-red-500"}>
+                                            • At least 8 characters
+                                        </p>
+                                        <p className={passwordChecks.upper ? "text-green-500" : "text-red-500"}>
+                                            • One uppercase letter
+                                        </p>
+                                        <p className={passwordChecks.number ? "text-green-500" : "text-red-500"}>
+                                            • One number
+                                        </p>
+                                        <p className={passwordChecks.special ? "text-green-500" : "text-red-500"}>
+                                            • One special character
+                                        </p>
+                                    </div>
+
                                 </div>
                             )}
 
