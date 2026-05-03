@@ -61,6 +61,12 @@ const StaticForm = () => {
             }
         });
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(formData.email)) {
+            newErrors.email = "Please enter a valid email (must include @ and domain)";
+        }
+        
         if (!/^\d{4,5}$/.test(formData.postCode)) {
             newErrors.postCode = "Postcode must be 4–5 digits";
         }
