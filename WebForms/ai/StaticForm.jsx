@@ -19,6 +19,7 @@ const StaticForm = () => {
         email: "",
         confirmEmail: "",
         password: "",
+        confirmPassword: "",
     });
 
     const [errors, setErrors] = useState({});
@@ -68,16 +69,22 @@ const StaticForm = () => {
             newErrors.mobile = "Mobile number must be 8-11 digits";
         }
 
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+        
         if (!passwordRegex.test(formData.password)) {
             newErrors.password =
-                "Password must be at least 8 characters, include 1 uppercase letter and 1 number";
+                "Password must be at least 8 characters, include 1 uppercase letter, 1 number, and 1 special character";
+        }
+
+        if (formData.password !== formData.confirmPassword) {
+            newErrors.confirmPassword = "Passwords do not match";
         }
 
         if (formData.email !== formData.confirmEmail) {
             newErrors.confirmEmail = "Emails do not match";
         }
+
+
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -98,6 +105,7 @@ const StaticForm = () => {
             email: "",
             confirmEmail: "",
             password: "",
+            confirmPassword: "",
         });
 
         setErrors({});
@@ -130,7 +138,7 @@ const StaticForm = () => {
 
             if (!res.ok) throw new Error(data.message || "Server error");
 
-            console.log("✅ Static form submitted:", { ...formData, timeSpent  });
+            console.log("✅ Static form submitted:", { ...formData, timeSpent });
             setShowSuccess(true);
         } catch (error) {
             setErrorMessage(error.message);
@@ -145,6 +153,7 @@ const StaticForm = () => {
 
     const labels = {
         confirmEmail: "Confirm Email",
+        confirmPassword: "Confirm Password",
         postCode: "Post Code",
     };
 
@@ -200,7 +209,7 @@ const StaticForm = () => {
                                 name={field}
                                 value={formData[field]}
                                 onChange={handleChange}
-                                type={field.includes("password") ? "password" : field.includes("email") ? "email" : "text"}
+                                type={field.toLowerCase().includes("password") ? "password" : field.includes("email") ? "email" : "text"}
                                 inputMode={
                                     field === "postCode" || field === "mobile"
                                         ? "numeric"

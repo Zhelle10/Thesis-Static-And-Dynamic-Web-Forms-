@@ -19,6 +19,7 @@ const DynamicForm = () => {
         email: "",
         confirmEmail: "",
         password: "",
+        confirmPassword: "",
     });
 
     const [errors, setErrors] = useState({});
@@ -132,6 +133,12 @@ const DynamicForm = () => {
                 "Password must be at least 8 characters and include 1 uppercase letter, 1 number, and 1 special character";
         }
 
+        if (formData.password && formData.confirmPassword) {
+            if (formData.password !== formData.confirmPassword) {
+                newErrors.confirmPassword = "Passwords do not match";
+            }
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -187,6 +194,7 @@ const DynamicForm = () => {
             email: "",
             confirmEmail: "",
             password: "",
+            confirmPassword: "",
         });
 
         setErrors({});
@@ -195,7 +203,7 @@ const DynamicForm = () => {
 
         navigate("/static"); // 👈 redirect after OK
     };
-
+    
     // ❌ ERROR MODAL CLOSE
     const handleCloseError = () => {
         setShowError(false);
@@ -216,6 +224,7 @@ const DynamicForm = () => {
 
     const labels = {
         confirmEmail: "Confirm Email",
+        confirmPassword: "Confirm Password",
         postCode: "Post Code",
     };
 
@@ -274,7 +283,7 @@ const DynamicForm = () => {
                                 value={formData[field]}
                                 onChange={handleChange}
                                 type={
-                                    field.includes("password")
+                                    field.toLowerCase().includes("password")
                                         ? "password"
                                         : field.includes("email")
                                             ? "email"
