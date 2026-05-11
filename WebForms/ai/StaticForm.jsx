@@ -76,7 +76,7 @@ const StaticForm = () => {
         }
 
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-        
+
         if (!passwordRegex.test(formData.password)) {
             newErrors.password =
                 "Password must be at least 8 characters, include 1 uppercase letter, 1 number, and 1 special character";
@@ -209,7 +209,11 @@ const StaticForm = () => {
                     {Object.keys(formData).map((field) => (
                         <div
                             key={field}
-                            className={field === "password" ? "sm:col-span-2" : ""}
+                            className={
+                                field === "password" || field === "confirmPassword"
+                                    ? "sm:col-span-2"
+                                    : ""
+                            }
                         >
                             <label className="text-xs sm:text-sm text-gray-600">
                                 {labels[field] ||

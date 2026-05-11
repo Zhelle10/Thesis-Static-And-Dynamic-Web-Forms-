@@ -291,7 +291,11 @@ const DynamicForm = () => {
                     {Object.keys(formData).map((field) => (
                         <div
                             key={field}
-                            className={field === "password" ? "sm:col-span-2" : ""}
+                            className={
+                                field === "password" || field === "confirmPassword"
+                                    ? "sm:col-span-2"
+                                    : ""
+                            }
                         >
                             <label className="text-xs sm:text-sm text-gray-600">
                                 {labels[field] ||
