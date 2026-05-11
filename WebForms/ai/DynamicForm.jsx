@@ -241,7 +241,7 @@ const DynamicForm = () => {
         name: "Full Name",
         address: "Address",
         city: "City",
-        state: "State/Province",
+        state: "Region",
         country: "Country",
         nationality: "Nationality",
         mobile: "Mobile Number",
