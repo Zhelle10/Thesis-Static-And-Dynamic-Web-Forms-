@@ -4,7 +4,7 @@ import FormTimer from "/src/components/FormTimer";
 import SuccessModal from "/src/components/SuccessModal";
 import ErrorModal from "/src/components/ErrorModal";
 
-const API_URL = "http://192.168.38.229:5000"; // 🔁 change if IP changes
+const API_URL = "http://192.168.0.197:5000"; // 🔁 change if IP changes
 
 const DynamicForm = () => {
     const [formData, setFormData] = useState({
@@ -238,6 +238,14 @@ const DynamicForm = () => {
 
 
     const labels = {
+        name: "Full Name",
+        address: "Address",
+        city: "City",
+        state: "State/Province",
+        country: "Country",
+        nationality: "Nationality",
+        mobile: "Mobile Number",
+        email: "Email",
         confirmEmail: "Confirm Email",
         confirmPassword: "Confirm Password",
         postCode: "Post Code",

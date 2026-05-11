@@ -4,7 +4,7 @@ import FormTimer from "/src/components/FormTimer";
 import SuccessModal from "/src/components/SuccessModal";
 import ErrorModal from "/src/components/ErrorModal";
 
-const API_URL = "http://192.168.38.229:5000"; // 🔁 change if IP changes
+const API_URL = "http://1192.168.0.197:5000"; // 🔁 change if IP changes
 
 const StaticForm = () => {
     const [formData, setFormData] = useState({
@@ -66,7 +66,7 @@ const StaticForm = () => {
         if (!emailRegex.test(formData.email)) {
             newErrors.email = "Please enter a valid email (must include @ and domain)";
         }
-        
+
         if (!/^\d{4,5}$/.test(formData.postCode)) {
             newErrors.postCode = "Postcode must be 4–5 digits";
         }
@@ -158,6 +158,14 @@ const StaticForm = () => {
     };
 
     const labels = {
+        name: "Full Name",
+        address: "Address",
+        city: "City",
+        state: "State/Province",
+        country: "Country",
+        nationality: "Nationality",
+        mobile: "Mobile Number",
+        email: "Email",
         confirmEmail: "Confirm Email",
         confirmPassword: "Confirm Password",
         postCode: "Post Code",
