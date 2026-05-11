@@ -359,7 +359,9 @@ const DynamicForm = () => {
                                 )}
                             </div>
 
-                            {field === "confirmPassword" && showPasswordMatchMessage && (
+                            {field === "confirmPassword" &&
+                                showPasswordMatchMessage &&
+                                !errors.confirmPassword && (
                                 <p
                                     className={`text-[11px] sm:text-xs mt-1 ${isPasswordMatch ? "text-green-500" : "text-red-500"
                                         }`}
@@ -368,14 +370,16 @@ const DynamicForm = () => {
                                 </p>
                             )}
 
-                            {field === "confirmEmail" && showEmailMatchMessage && (
-                                <p
-                                    className={`text-[11px] sm:text-xs mt-1 ${isEmailMatch ? "text-green-500" : "text-red-500"
-                                        }`}
-                                >
-                                    {isEmailMatch ? "Emails matched" : "Emails do not match"}
-                                </p>
-                            )}
+                            {field === "confirmEmail" &&
+                                showEmailMatchMessage &&
+                                !errors.confirmEmail && (
+                                    <p
+                                        className={`text-[11px] sm:text-xs mt-1 ${isEmailMatch ? "text-green-500" : "text-red-500"
+                                            }`}
+                                    >
+                                        {isEmailMatch ? "Emails matched" : "Emails do not match"}
+                                    </p>
+                                )}
 
                             {field === "password" && formData.password.length > 0 && (
                                 <div className="mt-2 space-y-2">
