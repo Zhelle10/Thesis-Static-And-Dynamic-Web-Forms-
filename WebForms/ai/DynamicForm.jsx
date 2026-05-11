@@ -339,29 +339,23 @@ const DynamicForm = () => {
                                 />
 
                                 {field === "password" && (
-                                    <span
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-blue-600 cursor-pointer select-none"
-                                        onMouseDown={() => setShowPassword(true)}
-                                        onMouseUp={() => setShowPassword(false)}
-                                        onMouseLeave={() => setShowPassword(false)}
-                                        onTouchStart={() => setShowPassword(true)}
-                                        onTouchEnd={() => setShowPassword(false)}
+                                    <button
+                                        type="button"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-blue-600 cursor-pointer"
+                                        onClick={() => setShowPassword(!showPassword)}
                                     >
-                                        Show
-                                    </span>
+                                        {showPassword ? "Hide" : "Show"}
+                                    </button>
                                 )}
 
                                 {field === "confirmPassword" && (
-                                    <span
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-blue-600 cursor-pointer select-none"
-                                        onMouseDown={() => setShowConfirmPassword(true)}
-                                        onMouseUp={() => setShowConfirmPassword(false)}
-                                        onMouseLeave={() => setShowConfirmPassword(false)}
-                                        onTouchStart={() => setShowConfirmPassword(true)}
-                                        onTouchEnd={() => setShowConfirmPassword(false)}
+                                    <button
+                                        type="button"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-blue-600 cursor-pointer"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                     >
-                                        Show
-                                    </span>
+                                        {showConfirmPassword ? "Hide" : "Show"}
+                                    </button>
                                 )}
                             </div>
 
